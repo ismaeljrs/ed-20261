@@ -21,23 +21,27 @@ void destruir(ListaEncadeada *lista)
     free(lista); // so apaga o descritor da lista
 }
 
-int lista_vazia(ListaEncadeada *lista) {
+int lista_vazia(ListaEncadeada *lista)
+{
     return lista != NULL && lista->primeiro == NULL;
 }
 
 void adicionar_final(ListaEncadeada *lista, int valor)
 {
-    No *no = (No *) malloc(sizeof(No));
+    No *no = (No *)malloc(sizeof(No));
 
     if (no == NULL)
         return;
 
     no->dado = valor;
     no->proximo = NULL;
-    
-    if (lista_vazia(lista)) {
+
+    if (lista_vazia(lista))
+    {
         lista->primeiro = no;
-    } else {
+    }
+    else
+    {
         lista->ultimo->proximo = no;
     }
 
@@ -46,12 +50,13 @@ void adicionar_final(ListaEncadeada *lista, int valor)
 }
 
 No *buscar(ListaEncadeada *lista, int valor)
-{    
+{
     if (lista_vazia(lista))
-       return NULL;
+        return NULL;
 
     No *no = lista->primeiro;
-    while(no != NULL) {
+    while (no != NULL)
+    {
         if (no->dado == valor)
             return no;
         no = no->proximo;
@@ -62,4 +67,54 @@ No *buscar(ListaEncadeada *lista, int valor)
 
 void remover(ListaEncadeada *lista, int valor)
 {
+    if (lista_vazia(lista))
+        return;
+
+    // remove o primeiro
+    No *no = lista->primeiro;
+    if (no->dado == valor) {
+        lista->primeiro = no->proximo;
+        lista->quantidade--;
+        free(no);
+        return;
+    }
+    
+    // remove o do meio
+    No *anterior = no;    
+    while (no->proximo != NULL) {
+       anterior = no;
+       no = no->proximo;
+       if (no->dado == valor) {
+         anterior->proximo = no->proximo;
+         lista->quantidade--;
+         break;
+       }
+    }
+    
+    // remove o ultimo
+    if (no->proximo == NULL && no->dado == valor) {
+        lista->ultimo = anterior;
+    }
+
+    free(no);
+    // No *posterior = anterior->proximo;
+    // if (anterior->dado == valor) {
+    //    lista->primeiro = anterior->proximo;
+    //    free(anterior);
+    // } else {
+    //    while (posterior != NULL) {
+    //     if (posterior->dado == valor) {
+    //         anterior->proximo = posterior->proximo;
+    //         break;            
+    //     }
+    //     anterior = posterior;
+    //     posterior = posterior->proximo;
+    //    }
+    //    if (posterior->proximo == NULL) {
+    //      lista->ultimo = anterior;
+    //    }
+    //    free(posterior);
+    // }
+
+    // lista->quantidade--;
 }
