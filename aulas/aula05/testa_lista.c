@@ -25,7 +25,6 @@ int main() {
     no = buscar(lista, 65);
     printf("O valor 65 esta no No %p\n", no);
 
-
     remover(lista, 50);
     remover(lista, 10);
     remover(lista, 9);
