@@ -16,8 +16,8 @@ TabelaHash *criar(int tamanho)
         return NULL;
     }
 
-    tabela->dados = (int *)malloc(sizeof(int)*tamanho);
-    memset(tabela->dados, 0, sizeof(int)*tamanho);
+    tabela->dados = (No **)malloc(sizeof(No*)*tamanho);
+    memset(tabela->dados, 0, sizeof(No*)*tamanho);
     tabela->quantidade = 0;
     tabela->tamanho = tamanho;
 
@@ -32,15 +32,22 @@ void destruir(TabelaHash *tabela_hash) {
 void inserir(TabelaHash *tabela_hash, int valor) {
     int hash = calcular_hash(valor);
 
-    tabela_hash->dados[hash] = valor;
+    No *no = (No *)malloc(sizeof(No));
+    no->dado = valor;
+    no->proximo = tabela_hash->dados[hash];
+    tabela_hash->dados[hash] = no;
     tabela_hash->quantidade++;
 }
 
 int buscar(TabelaHash *tabela_hash, int valor) {
     int hash = calcular_hash(valor);
 
-    if (tabela_hash->dados[hash] == valor) {
-        return hash;
+    No *no = tabela_hash->dados[hash];
+    while(no != NULL) {
+        if (no->dado == valor) {
+            return hash;
+        }
+        no = no->proximo;
     }
 
     return -1;
@@ -53,7 +60,21 @@ void remover(TabelaHash *tabela_hash, int valor) {
         return;
     }
 
-    tabela_hash->dados[achei] = 0;
+    No *no = tabela_hash->dados[achei];
+    if (no->dado == valor) {
+       tabela_hash->dados[achei] = no->proximo;
+       tabela_hash->quantidade--;
+       return;
+    }
+
+    while (no->proximo != NULL) {
+        No *anterior = no;
+        no = no->proximo;
+        if(no->dado == valor) {
+            anterior = no->proximo;           
+            return;
+        }
+    }
     tabela_hash->quantidade--;
 }
 

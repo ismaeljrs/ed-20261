@@ -7,7 +7,7 @@ typedef struct No {
 } No;
 
 typedef struct {
-    No *dados;
+    No **dados; // array de ponteiros
     int quantidade;
     int tamanho;
 } TabelaHash;

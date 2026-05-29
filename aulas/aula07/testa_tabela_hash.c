@@ -15,7 +15,13 @@ int main()
 
     for (int i = 0; i < tabela->tamanho; i++)
     {
-        printf("[%d] -> %i\n", i, tabela->dados[i]);
+        printf("[%d] -> ", i);
+        No *no = tabela->dados[i];
+        while(no != NULL) {
+            printf("%i -> ", no->dado);
+            no = no->proximo;
+        }
+        printf("\n");
     }
 
     printf("Procure o valor 12 na tabela hash:\n");
@@ -47,10 +53,16 @@ int main()
 
     for (int i = 0; i < tabela->tamanho; i++)
     {
-        printf("[%d] -> %i\n", i, tabela->dados[i]);
+        printf("[%d] -> ", i);
+        No *no = tabela->dados[i];
+        while(no != NULL) {
+            printf("%i -> ", no->dado);
+            no = no->proximo;
+        }
+        printf("\n");
     }    
 
     destruir(tabela);
-    
+
     return 0;
 }
