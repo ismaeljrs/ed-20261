@@ -2,130 +2,109 @@
 #include <stdlib.h>
 #include "lista_linear.h"
 
-// Struct interna para o Nó (Contém valor, anterior e proximo)
 typedef struct no_t {
     int valor;
     struct no_t* anterior;
     struct no_t* proximo;
 } no_t;
 
-// Struct interna para a Lista (Contém ponteiros para o primeiro e ultimo)
 struct lista_t {
     no_t* primeiro;
     no_t* ultimo;
 };
 
-// Cria uma lista vazia
-Lista lista_criar() {
-    Lista nova = (Lista)malloc(sizeof(struct lista_t));
-    if (nova != NULL) {
-        nova->primeiro = NULL;
-        nova->ultimo = NULL;
+Lista* lista_criar() {
+    Lista* l = (Lista*)malloc(sizeof(Lista));
+    if (l != NULL) {
+        l->primeiro = NULL;
+        l->ultimo = NULL;
     }
-    return nova;
+    return l;
 }
 
-// Verifica se está vazia
-bool lista_esta_vazia(Lista lista) {
-    if (lista == NULL) return true;
-    return (lista->primeiro == NULL);
+int lista_esta_vazia(Lista* l) {
+    if (l == NULL || l->primeiro == NULL) return TRUE;
+    return FALSE;
 }
 
-// Insere no final da lista
-bool lista_inserir(Lista lista, int valor) {
-    if (lista == NULL) return false;
-    
-    no_t* novo_no = (no_t*)malloc(sizeof(no_t));
-    if (novo_no == NULL) return false;
-    
-    novo_no->valor = valor;
-    novo_no->proximo = NULL;
-    
-    if (lista_esta_vazia(lista)) {
-        novo_no->anterior = NULL;
-        lista->primeiro = novo_no;
-        lista->ultimo = novo_no;
+int lista_inserir(Lista* l, int valor) {
+    if (l == NULL) return FALSE;
+    no_t* novo = (no_t*)malloc(sizeof(no_t));
+    if (novo == NULL) return FALSE;
+
+    novo->valor = valor;
+    novo->proximo = NULL;
+    novo->anterior = l->ultimo;
+
+    if (lista_esta_vazia(l)) {
+        l->primeiro = novo;
     } else {
-        novo_no->anterior = lista->ultimo;
-        lista->ultimo->proximo = novo_no;
-        lista->ultimo = novo_no;
+        l->ultimo->proximo = novo;
     }
-    return true;
+    l->ultimo = novo;
+    return TRUE;
 }
 
-// Remove um elemento por valor
-bool lista_remover(Lista lista, int valor) {
-    if (lista == NULL || lista_esta_vazia(lista)) return false;
-    
-    no_t* atual = lista->primeiro;
-    
+int lista_buscar(Lista* l, int valor) {
+    if (lista_esta_vazia(l)) return FALSE;
+    no_t* atual = l->primeiro;
+    while (atual != NULL) {
+        if (atual->valor == valor) return TRUE;
+        atual = atual->proximo;
+    }
+    return FALSE;
+}
+
+int lista_remover(Lista* l, int valor) {
+    if (lista_esta_vazia(l)) return FALSE;
+    no_t* atual = l->primeiro;
+
     while (atual != NULL && atual->valor != valor) {
         atual = atual->proximo;
     }
-    
-    if (atual == NULL) return false; // Não achou
-    
-    if (atual == lista->primeiro) { // Remove o primeiro
-        lista->primeiro = atual->proximo;
-        if (lista->primeiro != NULL) {
-            lista->primeiro->anterior = NULL;
-        } else {
-            lista->ultimo = NULL; // Lista ficou vazia
-        }
-    } else if (atual == lista->ultimo) { // Remove o último
-        lista->ultimo = atual->anterior;
-        lista->ultimo->proximo = NULL;
-    } else { // Remove do meio
+
+    if (atual == NULL) return FALSE; // Não achou
+
+    if (atual == l->primeiro) {
+        l->primeiro = atual->proximo;
+        if (l->primeiro != NULL) l->primeiro->anterior = NULL;
+    } else {
         atual->anterior->proximo = atual->proximo;
-        atual->proximo->anterior = atual->anterior;
     }
-    
+
+    if (atual == l->ultimo) {
+        l->ultimo = atual->anterior;
+        if (l->ultimo != NULL) l->ultimo->proximo = NULL;
+    } else {
+        if (atual->proximo != NULL) atual->proximo->anterior = atual->anterior;
+    }
+
     free(atual);
-    return true;
+    return TRUE;
 }
 
-// Busca o elemento e retorna o índice (posição) dele
-int lista_buscar(Lista lista, int valor) {
-    if (lista == NULL || lista_esta_vazia(lista)) return -1;
-    
-    no_t* atual = lista->primeiro;
-    int indice = 0;
-    
-    while (atual != NULL) {
-        if (atual->valor == valor) {
-            return indice;
-        }
-        atual = atual->proximo;
-        indice++;
-    }
-    return -1;
-}
-
-// Exibe todos os elementos da lista da esquerda para a direita
-void lista_exibir(Lista lista) {
-    if (lista == NULL || lista_esta_vazia(lista)) {
+void lista_exibir(Lista* l) {
+    if (lista_esta_vazia(l)) {
         printf("Lista vazia.\n");
         return;
     }
-    
-    no_t* atual = lista->primeiro;
-    printf("Lista: [ ");
+    no_t* atual = l->primeiro;
+    printf("Lista: ");
     while (atual != NULL) {
-        printf("%d ", atual->valor);
+        printf("[%d] ", atual->valor);
         atual = atual->proximo;
     }
-    printf("]\n");
+    printf("\n");
 }
 
-// Libera toda a memória da lista
-void lista_destruir(Lista lista) {
-    if (lista == NULL) return;
-    
-    no_t* atual = lista->primeiro;
-    while (atual != NULL) {
-        no_t* proximo = atual->proximo;
-        free(atual);
-        atual = proximo;
+void lista_destruir(Lista* l) {
+    if (l != NULL) {
+        no_t* atual = l->primeiro;
+        while (atual != NULL) {
+            no_t* aux = atual->proximo;
+            free(atual);
+            atual = aux;
+        }
+        free(l);
     }
-    free(lista);
 }

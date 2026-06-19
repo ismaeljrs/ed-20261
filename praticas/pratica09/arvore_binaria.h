@@ -10,7 +10,6 @@ Arvore* arvore_criar();
 int arvore_inserir(Arvore* a, int valor);
 void arvore_exibir_pre_ordem(Arvore* a);
 void arvore_exibir_em_ordem(Arvore* a);
-void arvore_exibir_pos_ordem(Arvore* a); // Ajustado para cobrir a duplicata do roteiro
 int arvore_esta_vazia(Arvore* a);
 void arvore_destruir(Arvore* a);
 
